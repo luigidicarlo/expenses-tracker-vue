@@ -1,26 +1,60 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <Header />
+  <main class="container">
+    <ExpenseForm @onexpenseadded="onExpenseAdded" />
+    <Expenses
+      :expenses="filteredExpenses"
+      @onexpensedelete="onExpenseDelete"
+      @onexpensesfilter="onExpensesFilter"
+    />
+  </main>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Expenses from "./components/Expenses.vue";
+import ExpenseForm from "./components/ExpenseForm.vue";
+import Header from "./components/Header.vue";
+
+import { load, save } from "./utils/storage";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
-</script>
+    Expenses,
+    ExpenseForm,
+    Header,
+  },
+  data() {
+    return {
+      expenses: load(),
+      filter: "All",
+    };
+  },
+  computed: {
+    filteredExpenses: function () {
+      if (this.filter === "All") return this.expenses;
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      return this.expenses.filter((expense) => expense.type === this.filter);
+    },
+  },
+  methods: {
+    onExpenseAdded(expense) {
+      this.expenses = [expense, ...this.expenses];
+      save(this.expenses);
+    },
+    onExpenseDelete(expenseId) {
+      if (window.confirm("Are you sure?")) {
+        this.expenses = this.expenses.filter(
+          (expense) => expense.id !== expenseId
+        );
+        save(this.expenses);
+      }
+    },
+    onExpensesFilter(filter) {
+      if (String(this.filter) === String(filter)) this.filter = "";
+
+      this.filter = filter;
+    },
+  },
+};
+</script>
