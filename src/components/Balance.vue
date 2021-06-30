@@ -3,7 +3,7 @@
     <h3 class="text-center">
       Balance:
       <span :class="`text-${balance >= 0 ? 'success' : 'danger'}`">
-        {{ balance }}
+        {{ balance.toFixed(2) }}
       </span>
     </h3>
   </div>
