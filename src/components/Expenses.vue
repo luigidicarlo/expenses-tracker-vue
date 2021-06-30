@@ -50,7 +50,8 @@
                   Number(expense.amount) < 0 ? 'danger' : 'success'
                 }`"
               >
-                {{ Number(expense.amount) >= 0 ? "+" : "" }}{{ expense.amount }}
+                {{ Number(expense.amount) >= 0 ? "+" : ""
+                }}{{ Number(expense.amount).toFixed(2) }}
               </h6>
             </div>
           </li>
@@ -78,10 +79,9 @@ export default {
   },
   computed: {
     balance: function () {
-      return this.expenses.reduce(
-        (prev, curr) => (prev += Number(curr.amount)),
-        0
-      );
+      return this.expenses
+        .reduce((prev, curr) => (prev += Number(curr.amount)), 0)
+        .toFixed(2);
     },
     showControls: function () {
       return this.expenses.length > 0;
